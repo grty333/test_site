@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solvet — Цветочный магазин</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Сброс и переменные */
+        *, *::before, *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg-main: #faf8f5;
+            --text-dark: #2c2c2c;
+            --text-medium: #5a5a5a;
+            --text-light: #8a8a8a;
+            --accent-pink: #fce4e6;
+            --accent-green: #e8f5e9;
+            --accent-purple: #f3e5f5;
+            --btn-pink: #e91e63;
+            --btn-green: #4caf50;
+            --radius: 16px;
+            --gap: 24px;
+            --transition: 0.25s ease;
+            --max-width: 1200px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-dark);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button, a.btn {
+            cursor: pointer;
+            border: none;
+            border-radius: var(--radius);
+            padding: 14px 28px;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 12px;
+            object-fit: cover;
+        }
+
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 16px;
+            color: var(--text-dark);
+        }
+
+        .section-subtitle {
+            font-size: clamp(1.125rem, 2.5vw, 1.25rem);
+            text-align: center;
+            color: var(--text-medium);
+            max-width: 600px;
+            margin: 0 auto 60px;
+        }
+
+        /* Шапка */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(250, 248, 245, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 100;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+            padding: 16px 0;
+        }
+
+        .header-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .nav {
+            display: none;
+        }
+
+        .nav.active {
+            display: flex;
+        }
+
+        .nav-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            background: white;
+            padding: 40px 20px;
+            border-radius: var(--radius);
+            position: absolute;
+            top: 100%;
+            right: 20px;
+            width: 240px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .nav-link {
+            font-weight: 500;
+            color: var(--text-dark);
+            padding: 8px 0;
+        }
+
+        .nav-link:hover {
+            color: var(--btn-pink);
+        }
+
+        .btn-primary {
+            background-color: var(--btn-pink);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #c2185b;
+            transform: translateY(-2px);
+        }
+
+        .burger {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+
+        .burger span {
+            width: 24px;
+            height: 2px;
+            background: var(--text-dark);
+            display: block;
+            transition: var(--transition);
+        }
+
+        .burger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(6px, 6px);
+        }
+
+        .burger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .burger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(6px, -6px);
+        }
+
+        /* Hero */
+        .hero {
+            background: linear-gradient(rgba(44, 44, 44, 0.4), rgba(44, 44, 44, 0.4)), 
+                        url('https://picsum.photos/seed/solvet-hero/1600/900') center/cover no-repeat;
+            color: white;
+            text-align: center;
+            padding: 140px 20px 120px;
+            margin-top: 80px; /* отступ для фиксированной шапки */
+        }
+
+        .hero h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2.5rem, 6vw, 4.5rem);
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero p {
+            font-size: clamp(1.125rem, 3vw, 1.5rem);
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Каталог */
+        .catalog {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--gap);
+            padding: 0 20px;
+        }
+
+        @media (min-width: 768px) {
+            .catalog {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .catalog {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--radius);
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.1);
+        }
+
+        .card-img {
+            height: 240px;
+            width: 100%;
+        }
+
+        .card-body {
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+
+        .card-title {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+        }
+
+        .card-desc {
+            font-size: 0.95rem;
+            color: var(--text-medium);
+            flex-grow: 1;
+            margin-bottom: 16px;
+        }
+
+        .card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: auto;
+        }
+
+        .card-price {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text-dark);
+            border: 1px solid #e0e0e0;
+        }
+
+        .btn-secondary:hover {
+            background: var(--accent-pink);
+            border-color: var(--btn-pink);
+            color: var(--btn-pink);
+            transform: translateY(-2px);
+        }
+
+        /* Преимущества */
+        .features {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--gap);
+            text-align: center;
+        }
+
+        @media (min-width: 768px) {
+            .features {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .features {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .feature-item {
+            padding: 30px 20px;
+            background: white;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: var(--transition);
+        }
+
+        .feature-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        /* О нас */
+        .about {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--gap);
+            align-items: center;
+        }
+
+        @media (min-width: 768px) {
+            .about {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .about-text h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            margin-bottom: 16px;
+        }
+
+        .about-image img {
+            border-radius: var(--radius);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        /* Доставка */
+        .delivery-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--gap);
+        }
+
+        @media (min-width: 768px) {
+            .delivery-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .delivery-card {
+            background: white;
+            padding: 32px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        }
+
+        .delivery-card h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            color: var(--text-dark);
+        }
+
+        ul {
+            padding-left: 20px;
+            color: var(--text-medium);
+        }
+
+        /* Отзывы */
+        .reviews {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--gap);
+        }
+
+        @media (min-width: 768px) {
+            .reviews {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .reviews {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .review-card {
+            background: white;
+            padding: 28px;
+            border-radius: var(--radius);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .review-stars {
+            margin-bottom: 12px;
+        }
+
+        .review-stars span {
+            color: #fbbc05;
+            font-size: 1.2rem;
+        }
+
+        .review-text {
+            font-style: italic;
+            color: var(--text-medium);
+            margin-bottom: 16px;
+            flex-grow: 1;
+        }
+
+        .review-author {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-top: auto;
+        }
+
+        /* CTA */
+        .cta {
+            background: var(--accent-pink);
+            text-align: center;
+            padding: 100px 20px;
+        }
+
+        .cta h2 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        /* Футер */
+        footer {
+            background: var(--text-dark);
+            color: rgba(255, 255, 255, 0.8);
+            padding: 60px 20px 20px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        @media (min-width: 768px) {
+            .footer-grid {
+                grid-template-columns: 2fr 1fr 1fr;
+            }
+        }
+
+        .footer-logo {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.75rem;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 16px;
+        }
+
+        .footer-social a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 8px;
+            transition: var(--transition);
+        }
+
+        .footer-social a:hover {
+            background: rgba(255,255,255,0.2);
+            transform: scale(1.1);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+
+<!-- Шапка -->
+<header class="header">
+    <div class="header-inner container">
+        <div class="logo">Solvet</div>
+        <nav class="nav" id="nav">
+            <ul class="nav-list">
+                <li><a href="#catalog" class="nav-link">Каталог</a></li>
+                <li><a href="#about" class="nav-link">О нас</a></li>
+                <li><a href="#delivery" class="nav-link">Доставка</a></li>
+                <li><a href="#contacts" class="nav-link">Контакты</a></li>
+            </ul>
+        </nav>
+        <a href="#cta" class="btn btn-primary">Заказать</a>
+        <button class="burger" id="burger" aria-label="Открыть меню">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+    </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+    <div class="container">
+        <h1>Свежие букеты с доставкой за 2 часа</h1>
+        <p>Ручная сборка, только премиальные цветы. Привезем в любую точку города, отправим фото перед отправкой.</p>
+        <a href="#catalog" class="btn btn-primary">Выбрать букет</a>
+    </div>
+</section>
+
+<!-- Каталог -->
+<section id="catalog" class="section">
+    <div class="container">
+        <h2 class="section-title">Популярные букеты</h2>
+        <p class="section-subtitle">Сезонные композиции от наших флористов. Каждый букет собирается индивидуально под ваш запрос.</p>
+        <div class="catalog">
+            <!-- Карточка 1 -->
+            <div class="card">
+                <img src="https://picsum.photos/seed/rose/600/800" alt="Букет из пионовидных роз" class="card-img">
+                <div class="card-body">
+                    <h3 class="card-title">Нежность утра</h3>
+                    <p class="card-desc">Пионовидные розы, эустома и эвкалипт. Идеально для первого свидания или годовщины.</p>
+                    <div class="card-footer">
+                        <span class="card-price">4 500 ₽</span>
+                        <a href="#" class="btn btn-secondary">В корзину</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Карточка 2 -->
+            <div class="card">
+                <img src="https://picsum.photos/seed/peonies/600/800" alt="Букет из ранункулюсов" class="card-img">
+                <div class="card-body">
+                    <h3 class="card-title">Солнечный день</h3>
+                    <p class="card-desc">Ранункулюсы, тюльпаны и матиола. Пастельные оттенки для теплого настроения.</p>
+                    <div class="card-footer">
+                        <span class="card-price">3 800 ₽</span>
+                        <a href="#" class="btn btn-secondary">В корзину</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Карточка 3 -->
+            <div class="card">
+                <img src="https://picsum.photos/seed/white/600/800" alt="Минималистичный белый букет" class="card-img">
+                <div class="card-body">
+                    <h3 class="card-title">Белая вуаль</h3>
+                    <p class="card-desc">Каллы, орхидеи и бруния. Строгая геометрия и премиальная эстетика.</p>
+                    <div class="card-footer">
+                        <span class="card-price">6 200 ₽</span>
+                        <a href="#" class="btn btn-secondary">В корзину</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Карточка 4 -->
+            <div class="card">
+                <img src="https://picsum.photos/seed/garden/600/800" alt="Садовый букет" class="card-img">
+                <div class="card-body">
+                    <h3 class="card-title">Летний сад</h3>
+                    <p class="card-desc">Гортензии, ромашки и зелень. Объемный букет для самых близких.</p>
+                    <div class="card-footer">
+                        <span class="card-price">5 100 ₽</span>
+                        <a href="#" class="btn btn-secondary">В корзину</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Карточка 5 -->
+            <div class="card">
+                <img src="https://picsum.photos/seed/red/600/800" alt="Яркий букет" class="card-img">
+                <div class="card-body">
+                    <h3 class="card-title">Страсть</h3>
+                    <p class="card-desc">Алые розы, амарант и ягоды гиперикума. Классика, которая говорит сама за себя.</p>
+                    <div class="card-footer">
+                        <span class="card-price">4 900 ₽</span>
+                        <a href="#" class="btn btn-secondary">В корзину</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Карточка 6 -->
+            <div class="card">
+                <img src="https://picsum.photos/seed/tropical/600/800" alt="Тропический букет" class="card-img">
+                <div class="card-body">
+                    <h3 class="card-title">Экзотика</h3>
+                    <p class="card-desc">Протея, орхидеи и антуриум. Для тех, кто ценит смелые решения.</p>
+                    <div class="card-footer">
+                        <span class="card-price">7 500 ₽</span>
+                        <a href="#" class="btn btn-secondary">В корзину</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Преимущества -->
+<section class="section" style="background: white; padding: 100px 20px;">
+    <div class="container">
+        <h2 class="section-title">Почему выбирают Solvet</h2>
+        <div class="features">
+            <div class="feature-item">
+                <div class="feature-icon">🌿</div>
+                <h3>100% свежесть</h3>
+                <p>Цветы поступают напрямую с плантаций каждые 48 часов. Мы не работаем с заморозкой.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">⏱️</div>
+                <h3>Доставка за 2 часа</h3>
+                <p>Собираем букет за 15 минут и передаем курьеру. Точное время прибытия в приложении.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">📸</div>
+                <h3>Фотоотчёт</h3>
+                <p>Перед отправкой присылаем живые фото готового букета в WhatsApp или Telegram.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">👐</div>
+                <h3>Ручная сборка</h3>
+                <p>Никаких конвейерных заготовок. Каждый стебель очищается и подрезается вручную.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- О нас -->
+<section id="about" class="section">
+    <div class="container">
+        <div class="about">
+            <div class="about-text">
+                <h2 class="section-title">О магазине Solvet</h2>
+                <p>Solvet — это не просто доставка цветов. Это мастерская, где каждый букет создается как произведение искусства. Мы работаем с 2018 года и знаем всё о языке цветов. Наши флористы проходят стажировку в Европе и ежегодно посещают цветочные выставки в Нидерландах.</p>
+                <p>Мы отказались от пластиковых лент и блесток в пользу натурального крафта, шелка и живых веток. Упаковка компостируется, а остатки цветов мы передаем в приюты для животных.</p>
+            </div>
+            <div class="about-image">
+                <img src="https://picsum.photos/seed/florist/800/600" alt="Флорист за работой">
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Доставка и оплата -->
+<section id="delivery" class="section" style="background: var(--bg-main); padding: 100px 20px;">
+    <div class="container">
+        <h2 class="section-title">Доставка и оплата</h2>
+        <div class="delivery-grid">
+            <div class="delivery-card">
+                <h3>Зоны и время</h3>
+                <ul>
+                    <li><strong>Центр:</strong> Бесплатно, 60–120 минут</li>
+                    <li><strong>Спальные районы:</strong> 290 ₽, 90–150 минут</li>
+                    <li><strong>Область (до 30 км):</strong> 590 ₽, от 2 часов</li>
+                    <li><strong>Срочная доставка (30 мин):</strong> +990 ₽ к заказу</li>
+                </ul>
+            </div>
+            <div class="delivery-card">
+                <h3>Способы оплаты</h3>
+                <ul>
+                    <li>Банковские карты (Visa, Mastercard, МИР)</li>
+                    <li>СБП (Система быстрых платежей)</li>
+                    <li>Apple Pay / Google Pay</li>
+                    <li>Оплата при получении (наличные или терминал)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Отзывы -->
+<section id="reviews" class="section">
+    <div class="container">
+        <h2 class="section-title">Отзывы наших клиентов</h2>
+        <div class="reviews">
+            <div class="review-card">
+                <div class="review-stars">
+                    <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                </div>
+                <p class="review-text">«Заказывала маме на юбилей. Букет приехал через час, выглядел даже лучше, чем на сайте. Мама в восторге, курьер очень вежливый».</p>
+                <div class="review-author">Екатерина В.</div>
+            </div>
+            <div class="review-card">
+                <div class="review-stars">
+                    <span>★</span><span>★</span><span>★</span><span>★</span><span>★</span>
+                </div>
+                <p class="review-text">«Нужен был букет в 6 утра для коллеги. Solvet — единственный, кто принял заказ так рано и привез вовремя. Спасибо!»</p>
+                <div class="review-author">Максим Т.</div>
+            </div>
+            <div class="review-card">
+                <div class="review-stars">
+                    <span>★</span><span>★</span><span>★</span><span>★</span><span>☆</span>
+                </div>
+                <p class="review-text">«Очень красивые цветы, но упаковка приехала немного помятой из-за дождя. В остальном сервис на высоте, буду заказывать еще».</p>
+                <div class="review-author">Анна К.</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section id="cta" class="cta">
+    <div class="container">
+        <h2>Закажите букет прямо сейчас</h2>
+        <p>Оставьте номер, и мы подберем идеальную композицию под ваш повод и бюджет.</p>
+        <a href="tel:+74951234567" class="btn btn-primary" style="background: white; color: var(--text-dark); margin-right: 16px;">+7 (495) 123-45-67</a>
+        <a href="https://wa.me/79991234567" class="btn btn-primary" style="background: #25D366; color: white;">Написать в WhatsApp</a>
+    </div>
+</section>
+
+<!-- Футер -->
+<footer id="contacts">
+    <div class="container">
+        <div class="footer-grid">
+            <div>
+                <div class="footer-logo">Solvet</div>
+                <p>Цветочная мастерская в центре города. Работаем ежедневно с 08:00 до 23:00.</p>
+                <div class="footer-social">
+                    <a href="#" aria-label="Telegram">📱</a>
+                    <a href="#" aria-label="Instagram">📸</a>
+                    <a href="#" aria-label="VK">🔵</a>
+                </div>
+            </div>
+            <div>
+                <h3>Навигация</h3>
+                <ul style="list-style: none; padding: 0;">
+                    <li style="margin-bottom: 12px;"><a href="#catalog" style="color: rgba(255,255,255,0.8);">Каталог</a></li>
+                    <li style="margin-bottom: 12px;"><a href="#about" style="color: rgba(255,255,255,0.8);">О нас</a></li>
+                    <li style="margin-bottom: 12px;"><a href="#delivery" style="color: rgba(255,255,255,0.8);">Доставка</a></li>
+                    <li><a href="#contacts" style="color: rgba(255,255,255,0.8);">Контакты</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3>Контакты</h3>
+                <p>г. Москва, ул. Цветочная, д. 10<br>
+                info@solvet-flowers.ru<br>
+                Ежедневно 08:00–23:00</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Solvet. Все права защищены. Политика конфиденциальности.</p>
+        </div>
+    </div>
+</footer>
+
+<script>
+    // Бургер-меню
+    const burger = document.getElementById('burger');
+    const nav = document.getElementById('nav');
+
+    burger.addEventListener('click', () => {
+        burger.classList.toggle('active');
+        nav.classList.toggle('active');
+    });
+
+    // Закрытие меню при клике на ссылку (для мобильных)
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', () => {
+            burger.classList.remove('active');
+            nav.classList.remove('active');
+        });
+    });
+</script>
+
+</body>
+</html>
